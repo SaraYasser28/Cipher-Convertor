@@ -1,6 +1,4 @@
-Certainly! Here's a README for your cipher program:
 
----
 
 # Cipher Program
 

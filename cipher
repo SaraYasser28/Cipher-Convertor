@@ -57,6 +57,10 @@ void userInput();
 void userKey();
 void vigenereEncrypt();
 void vigenereDecrypt();
+void PolybiusCipher();
+bool is_valid_p (string& key);
+void cipher(string& messg, char alpha[5][5] , string& key);
+void Decipher(string& messg , char alpha[5][5] , string& key);
 
 
 int main() {
@@ -67,7 +71,7 @@ int main() {
     do {
         // Display menu options
         cout << "\nChoose the cipher you want to use:\n\nA) XOR Cipher\nB) Atbash Cipher\nC) Bocanian Cipher\nD) Morse Code Cipher\n";
-        cout << "E) Affine Cipher\nF) Simple Substitution Cipher\nG) Rail Fence Cipher\nH) Vigenere Cipher\nI) Exit\n";
+        cout << "E) Affine Cipher\nF) Simple Substitution Cipher\nG) Rail Fence Cipher\nH) Vigenere Cipher\nI) Polybius Square Cipher\nJ) Exit\n";
         cout << "\nPlease enter your choice: ";
 
         cin >> choice;
@@ -102,6 +106,9 @@ int main() {
                 vigenereCipher(input);
                 break;
             case 'I':
+                PolybiusCipher();
+                break;
+            case 'J':
                 cout << "\nExiting program. Goodbye!\n";
                 break;
             default:
@@ -1100,4 +1107,103 @@ void vigenereDecrypt() {
         }
     }
     cout << "Decrypted message: " << decryptedMessage << endl;
+}
+void PolybiusCipher(){
+    char alpha [5][5] = {{'A','B','C','D','E'},{'F','G','H','I','K'},{'L','M','N','O','P'},{'Q','R','S','T','U'},{'V','W','X','Y','Z'}};
+    while (true) {
+        cout << "\n\nWelcome to Polybius Square Cipher\n";
+        cout << "\nA) Cipher a message\nB) Decipher a message\nC) Exit\n";
+        cout << "\nPlease enter your choice: ";
+
+        char choice;
+        cin >> choice;
+        choice = toupper(choice); // To accept small letter
+
+        string key;
+        string messg;
+        cin.ignore();
+
+        while (choice == 'A' || choice == 'B') {
+        
+            cout << "\nEnter a key: ";
+            getline(cin,key);
+            key.erase(remove_if(key.begin(), key.end(), ::isspace), key.end()); // To remove space 
+            if ( !is_valid_p (key) ){
+                cout << "\n** This is not valid , key mest be 1,2,3,4,5 with any order **\n";
+                continue;
+            }
+            
+            cout << "\nEnter your message: ";
+            getline(cin, messg);
+            
+            for (char& c: messg)
+                c = toupper(c);
+            break;
+        }
+        if (choice == 'A')
+            cipher(messg , alpha , key);
+        else if (choice == 'B')
+            Decipher(messg , alpha , key); 
+        else if (choice == 'C')
+            cout << "\nExiting ...\n";    
+        else 
+            cout << "\n** This is an invalid choice **\n ";
+        
+        
+    }
+}
+bool is_valid_p (string& key){
+    bool valid = true;
+    for (char& c: key){
+        if ( c !='1'&&c !='2' && c !='3' && c !='4' && c !='5' || key.length() !=5){
+            valid = false;
+        }
+    }
+    return valid;
+}
+
+void cipher(string& messg, char alpha[5][5] , string& key){
+    cout << "\nYour cipher message: " ;
+    for (char& c : messg){
+        if (c == 'J')
+            c = 'I';
+        for(int i=0 ; i<5 ; i++){
+            for (int k =0 ; k<5 ; k++){
+                if ( c == alpha[i][k])
+                    cout << key[i] << key[k];
+            }
+        }
+        if (c == ' ')
+            cout << c;
+    }
+}
+void Decipher(string& messg , char alpha[5][5] , string& key){
+    cout << "\nYour Decipher message: " ;
+    string TWO_char = "";
+    int i = 0, k = 0;
+    for (char c : messg){
+        if (c == '1' || c == '2' || c == '3' || c == '4' || c == '5' ){
+            while (TWO_char.length()<3){
+                TWO_char += c;
+                if (TWO_char.length() == 2){
+                    while ( i < 5 ){
+                        if (TWO_char[0] == key [i])
+                            break;
+                        else i++;
+                    }
+                    while ( k < 5 ){
+                        if (TWO_char[1] == key [k]) 
+                            break; 
+                        else k++;
+                    }
+                    cout << alpha[i][k] ;
+                    TWO_char.clear();
+                    i=0,k=0;
+                }
+                break;
+            }
+        }
+       if (c == ' ')
+            cout << c;
+    }
 }
